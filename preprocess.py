@@ -1,0 +1,16 @@
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+
+
+def preprocess(text):
+    text = text.lower()
+    tokens = word_tokenize(text)
+    stop_words = set(stopwords.words("english"))
+
+    tokens = [
+        word for word in tokens
+        if word.isalpha and word not in stop_words
+    ]
+
+    return tokens
