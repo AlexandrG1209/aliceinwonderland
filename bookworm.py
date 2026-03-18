@@ -8,4 +8,6 @@ book_id = sys.argv[1]
 text = get_book(book_id)
 
 tokens = preprocess(text)
-print(tokens[:20])
+
+result = lex_div(tokens)
+print(result)
