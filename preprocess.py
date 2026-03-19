@@ -10,7 +10,18 @@ def preprocess(text):
 
     tokens = [
         word for word in tokens
-        if word.isalpha and word not in stop_words
+        if word.isalpha() and word not in stop_words
     ]
 
     return tokens
+
+def clean_gutenberg(text):
+    start = text.find("*** START")
+    end = text.find("*** END")
+    if start != -1:
+        text = text[start:]
+        text = text.split("\n", 1)[1]
+
+    if end != -1:
+        text = text[:end]
+    return text

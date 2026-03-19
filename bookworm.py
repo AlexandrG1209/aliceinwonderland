@@ -1,6 +1,6 @@
 import spacy
 from loader import get_book
-from preprocess import preprocess
+from preprocess import preprocess, clean_gutenberg
 from lexdiv import lex_div
 from entities import entities
 
