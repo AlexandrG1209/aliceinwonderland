@@ -14,3 +14,10 @@ def preprocess(text):
     ]
 
     return tokens
+
+def clean_gutenberg(text):
+    start = text.find("*** START")
+    end = text.find("*** END")
+    if start != -1 and end != -1:
+        text = text[start:end]
+    return text

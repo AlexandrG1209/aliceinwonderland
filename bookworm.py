@@ -1,16 +1,21 @@
 import sys
 from loader import get_book
-from preprocess import preprocess
+from preprocess import preprocess, clean_gutenberg
 from lexdiv import lex_div
 
 book_id = sys.argv[1]
 
 text = get_book(book_id)
 
+text = clean_gutenberg(text)
+
 tokens = preprocess(text)
 
+print(tokens[:10])
+
 result = lex_div(tokens)
-print(result)
+
+print(tokens[:10])
 
 
 print("--- Main Menu ---\n\n\n",
