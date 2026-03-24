@@ -1,7 +1,6 @@
 from loader import get_book
 import spacy
 
-doc = get_book(book_id)
 def entities(doc):
     # Using set() to not have duplicates in the lists
     locations = set()
