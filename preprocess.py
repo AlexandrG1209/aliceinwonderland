@@ -7,6 +7,7 @@ from nltk.stem import WordNetLemmatizer
 
 
 # download 1 time
+#import nltk
 #nltk.download('punkt')
 #nltk.download('punkt_tab')
 #nltk.download('stopwords')
@@ -43,3 +44,31 @@ def preprocess(text):
     ]
 
     return tokens
+    
+
+def preprocess_chapters(chapter_texts):
+    """
+    Apply preprocessing to a list of chapter texts.
+
+    Parameters:
+        chapter_texts (list[str])
+
+    Returns:
+        list[list[str]]
+    """
+    return [preprocess(ch) for ch in chapter_texts]
+
+
+def preprocess_full_text(chapter_texts):
+    """
+    Combine all chapters into one text and preprocess it.
+
+    Useful for:
+        - summarization
+        - similarity
+
+    Returns:
+        list[str]
+    """
+    full_text = " ".join(chapter_texts)
+    return preprocess(full_text)

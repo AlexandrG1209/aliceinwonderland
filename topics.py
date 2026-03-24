@@ -1,28 +1,64 @@
-from collections import Counter
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
-def topics_per_chapter(chapters_tokens):
+def build_topics_per_chapter(chapters_tokens, n_words=10):
     """
-    For each chapter:
-    - count word frequencies
-    - take top 10 words
+    Extract top words per chapter using TF-IDF.
+
+    Parameters:
+        chapters_tokens (list[list[str]]): tokenized chapters
+        n_words (int): number of top words per chapter
+
+    Returns:
+        dict: {chapter_id: [word1, word2, ...]}
     """
 
-    result = {}
+    if not chapters_tokens:
+        raise ValueError("Empty chapters_tokens")
 
-    for i, tokens in enumerate(chapters_tokens):
+    # Convert tokens back to text documents
+    texts = [" ".join(tokens) for tokens in chapters_tokens]
 
-        if not tokens:
-            continue
+    # Build TF-IDF matrix
+    vectorizer = TfidfVectorizer(
+        max_df=0.9,      # ignore very frequent words
+        min_df=1,        # keep all words that appear at least once
+        stop_words=None  # already handled in preprocess
+    )
 
-        counts = Counter(tokens)
+    X = vectorizer.fit_transform(texts)
+    terms = vectorizer.get_feature_names_out()
 
-        # get 10 most common words
-        most_common = counts.most_common(10)
+    topics = {}
 
-        # keep only words
-        words = [word for word, freq in most_common]
+    # Extract top words for each chapter
+    for i in range(X.shape[0]):
+        row = X[i].toarray().flatten()
 
-        result[i + 1] = words
+        # Sort words by importance
+        indices = row.argsort()[::-1]
 
-    return result
+        # Take top N non-zero words
+        words = []
+        for idx in indices:
+            if row[idx] <= 0:
+                continue
+            words.append(terms[idx])
+            if len(words) == n_words:
+                break
+
+        topics[i + 1] = words
+
+    return topics
+
+
+def print_topics(topics):
+    """
+    Print topics in a readable format.
+    """
+    if not topics:
+        print("No topics found")
+        return
+
+    for chapter_id, words in topics.items():
+        print(f"Chapter {chapter_id}: {', '.join(words)}")
