@@ -18,9 +18,9 @@ def get_book(book_id):
     response = requests.get(url)
     response.raise_for_status()
 
-    doc = response.text
+    text = response.text
 
     with open(path, "w", encoding="utf-8") as f:
-        f.write(doc)
+        f.write(text)
 
-    return doc
+    return text
