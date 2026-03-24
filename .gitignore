@@ -3,3 +3,4 @@ books/
 __pycache__/
 *.pyc
 library_stuff/
+books_html/
