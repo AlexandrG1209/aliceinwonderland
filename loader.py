@@ -5,7 +5,7 @@ BOOKS_DIR = Path("books_html")
 BOOKS_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def get_book_html(book_id):
+def get_book(book_id):
     path = BOOKS_DIR / f"{book_id}.html"
 
     if path.exists():
