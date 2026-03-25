@@ -1,10 +1,9 @@
 import argparse
 from loader import get_book
 from html_parser import extract_chapters
-from preprocess import preprocess_chapters, preprocess_full_text
+from preprocess import preprocess_full_text
 from lexdiv import lex_div
 from entities import entities
-from topics import build_topics_per_chapter, print_topics
 
 # This parser reads the command line options
 parser = argparse.ArgumentParser(description="Book NLP tool")
@@ -13,7 +12,6 @@ parser.add_argument("book_id", type=int, help="Project Gutenberg book ID")
 
 parser.add_argument("--lexdiv", action="store_true")
 parser.add_argument("--entities", action="store_true")
-parser.add_argument("--topics", action="store_true")
 parser.add_argument("--summarise", action="store_true")
 parser.add_argument("--similar", action="store_true")
 
@@ -32,7 +30,6 @@ if not chapters:
 # Full text for spaCy and tokens for lexical analysis
 text = " ".join(chapters)
 tokens = preprocess_full_text(chapters)
-chapters_tokens = preprocess_chapters(chapters)
 
 # Show lexical diversity result
 if args.lexdiv:
@@ -46,11 +43,6 @@ if args.entities:
     doc = nlp(text)
     print(entities(doc))
 
-# Show topics for each chapter
-if args.topics:
-    topics = build_topics_per_chapter(chapters_tokens)
-    print_topics(topics)
-
 # These parts are not finished yet
 if args.summarise:
     print("not done yet")
@@ -58,7 +50,7 @@ if args.similar:
     print("not done yet")
 
 # If the user gives no option, we print a message
-if not any([args.lexdiv, args.entities, args.topics, args.summarise, args.similar]):
+if not any([args.lexdiv, args.entities, args.summarise, args.similar]):
     print("invalid input, try again")
 
 
