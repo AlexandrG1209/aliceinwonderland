@@ -5,6 +5,7 @@ from preprocess import preprocess_chapters, preprocess_full_text
 from lexdiv import lex_div
 from entities import entities
 from topics import build_topics_per_chapter, print_topics
+from summary import summarise
 
 # This parser reads the command line options
 parser = argparse.ArgumentParser(description="Book NLP tool")
@@ -53,7 +54,7 @@ if args.topics:
 
 # These parts are not finished yet
 if args.summarise:
-    print("not done yet")
+    print(summarise(text))
 if args.similar:
     print("not done yet")
 
