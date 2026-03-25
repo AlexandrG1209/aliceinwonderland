@@ -1,30 +1,44 @@
 import argparse
-import spacy
 from loader import get_book
-from preprocess import preprocess, clean_gutenberg
+from html_parser import extract_chapters
+from preprocess import preprocess_chapters, preprocess_full_text
 from lexdiv import lex_div
 from entities import entities
+from topics import build_topics_per_chapter, print_topics
 
-nlp = spacy.load("en_core_web_sm")
-
+# This parser reads the command line options
 parser = argparse.ArgumentParser(description="Book NLP tool")
 
 parser.add_argument("book_id", type=int, help="Project Gutenberg book ID")
 
 parser.add_argument("--lexdiv", action="store_true")
 parser.add_argument("--entities", action="store_true")
+parser.add_argument("--topics", action="store_true")
 parser.add_argument("--summarise", action="store_true")
 parser.add_argument("--similar", action="store_true")
 
 args = parser.parse_args()
 
-# Loading book
-text = get_book(args.book_id)
-text = clean_gutenberg(text)
+# We load the book html from Gutenberg
+html = get_book(args.book_id)
+if not html:
+    raise SystemExit("Could not load the book HTML.")
 
+# We extract the chapters or big text parts
+chapters = extract_chapters(html)
+if not chapters:
+    raise SystemExit("Could not extract any text from the book.")
 
+# Full text for spaCy and tokens for lexical analysis
+text = " ".join(chapters)
+tokens = preprocess_full_text(chapters)
+chapters_tokens = preprocess_chapters(chapters)
+
+# Show lexical diversity result
 if args.lexdiv:
-    print(lex_div(text))
+    print(lex_div(tokens))
+
+# Show named entities like persons and places
 if args.entities:
     import spacy
 
@@ -43,5 +57,37 @@ if args.summarise:
 if args.similar:
     print("not done yet")
 
-if not any([args.lexdiv, args.entities, args.summarise, args.similar]):
+# If the user gives no option, we print a message
+if not any([args.lexdiv, args.entities, args.topics, args.summarise, args.similar]):
     print("invalid input, try again")
+
+
+'''
+print("--- Main Menu ---\n\n\n",
+       "options:\n", 
+       "1. quit\n"
+       "2. Lexical diversity\n",
+       "3. Named entities recognition\n"
+       "4. summary\n", 
+       "5. Comparaison\n")
+
+user_opt = 0
+
+while user_opt != 1:
+    book_id = int(input("Enter book ID >"))
+    user_opt = int(input("Enter an option >"))
+
+    if user_opt == 1:
+        break
+    
+    text = get_book(book_id)
+
+    if user_opt == 2:
+        tokens = preprocess(text)
+        result =lex_div(tokens)
+        print(result)
+    
+    elif user_opt == 3:
+        doc = nlp(text)
+        entities(doc)
+''' 
