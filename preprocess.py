@@ -6,49 +6,62 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
 
-# download 1 time
-#import nltk
-#nltk.download('punkt')
-#nltk.download('punkt_tab')
-#nltk.download('stopwords')
-#nltk.download('wordnet')
+# Tool used to reduce words to their base form
 lemmatizer = WordNetLemmatizer()
-stop_words = set(stopwords.words("english"))
+
+# Load stop words if NLTK data is available
+try:
+    stop_words = set(stopwords.words("english"))
+except LookupError:
+    stop_words = set()
 
 
-# cleaning 
+# This function cleans the text
 def clean_text(text):
-
-    # remove extra characters
+    # Remove numbers and punctuation
     text = re.sub(r"[^a-zA-Z\s]", " ", text)
 
-    # Remove multiple spaces
+    # Remove extra spaces
     text = re.sub(r"\s+", " ", text)
 
     return text.strip()
 
 
-# main preprocess (tokenisation and lemmatization)
+# Main preprocessing function
 def preprocess(text):
-
+    # Lowercase the text first
     text = text.lower()
 
+    # Clean the text before tokenization
     text = clean_text(text)
 
-    tokens = word_tokenize(text)
+    # Tokenize the text, or use split if NLTK data is missing
+    try:
+        tokens = word_tokenize(text)
+    except LookupError:
+        tokens = text.split()
 
+    # Keep only useful words and lemmatize them
     tokens = [
-        lemmatizer.lemmatize(word)
+        _lemmatize(word)
         for word in tokens
         if word.isalpha() and word not in stop_words
     ]
 
     return tokens
+
+
+def _lemmatize(word):
+    # Lemmatize one word, or keep it if data is missing
+    try:
+        return lemmatizer.lemmatize(word)
+    except LookupError:
+        return word
     
 
 def preprocess_chapters(chapter_texts):
     """
-    Apply preprocessing to a list of chapter texts.
+    This function preprocesses each chapter.
 
     Parameters:
         chapter_texts (list[str])
@@ -56,19 +69,18 @@ def preprocess_chapters(chapter_texts):
     Returns:
         list[list[str]]
     """
+    # Apply preprocess() to each chapter
     return [preprocess(ch) for ch in chapter_texts]
 
 
 def preprocess_full_text(chapter_texts):
     """
-    Combine all chapters into one text and preprocess it.
+    This function joins all chapters and preprocesses them.
 
-    Useful for:
-        - summarization
-        - similarity
-
-    Returns:
-        list[str]
+    It is useful for the full book analysis.
     """
+    # Merge all chapters into one big text
     full_text = " ".join(chapter_texts)
+
+    # Preprocess the complete text
     return preprocess(full_text)
