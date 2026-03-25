@@ -16,29 +16,33 @@ def build_topics_per_chapter(chapters_tokens, n_words=10):
     if not chapters_tokens:
         raise ValueError("Empty chapters_tokens")
 
-    # Convert tokens back to text documents
+    # Convert token lists into text strings
     texts = [" ".join(tokens) for tokens in chapters_tokens]
 
-    # Build TF-IDF matrix
+    # Create the TF-IDF vectorizer
     vectorizer = TfidfVectorizer(
         max_df=0.9,      # ignore very frequent words
         min_df=1,        # keep all words that appear at least once
         stop_words=None  # already handled in preprocess
     )
 
+    # Build the TF-IDF matrix for all chapters
     X = vectorizer.fit_transform(texts)
+
+    # Get the words from the vectorizer
     terms = vectorizer.get_feature_names_out()
 
     topics = {}
 
-    # Extract top words for each chapter
+    # Process each chapter one by one
     for i in range(X.shape[0]):
+        # Convert one chapter row into a simple array
         row = X[i].toarray().flatten()
 
-        # Sort words by importance
+        # Sort words from highest score to lowest score
         indices = row.argsort()[::-1]
 
-        # Take top N non-zero words
+        # Keep only the top important words
         words = []
         for idx in indices:
             if row[idx] <= 0:
@@ -47,6 +51,7 @@ def build_topics_per_chapter(chapters_tokens, n_words=10):
             if len(words) == n_words:
                 break
 
+        # Save the result for this chapter
         topics[i + 1] = words
 
     return topics
@@ -60,5 +65,6 @@ def print_topics(topics):
         print("No topics found")
         return
 
+    # Print one line per chapter
     for chapter_id, words in topics.items():
         print(f"Chapter {chapter_id}: {', '.join(words)}")

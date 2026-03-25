@@ -1,15 +1,17 @@
-from loader import get_book
-import spacy
-
 def entities(doc):
-    # Using set() to not have duplicates in the lists
+    # We use sets to avoid duplicates
     locations = set()
     characters = set()
-    for ent in doc.ents:
-        if ent.label == "GPE":
-            locations.append(ent.text)
-        elif ent.label == "PERSON":
-            characters.append(ent.text)
 
-    entities = {"characters": characters, "locations": locations}
-    return entities
+    # We check each entity found by spaCy
+    for ent in doc.ents:
+        if ent.label_ == "GPE":
+            locations.add(ent.text)
+        elif ent.label_ == "PERSON":
+            characters.add(ent.text)
+
+    # We return a simple text result
+    return (
+        f"characters: {sorted(characters)}\n"
+        f"locations: {sorted(locations)}"
+    )
