@@ -1,3 +1,6 @@
+```md
+## Lexical Diversity Diagram
+
 ```mermaid
 flowchart LR
     A[Book ID] --> B[Load HTML book]
