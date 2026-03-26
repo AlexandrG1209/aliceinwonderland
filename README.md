@@ -1,4 +1,3 @@
-```md
 ## Lexical Diversity Diagram
 
 ```mermaid
