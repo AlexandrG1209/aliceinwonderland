@@ -5,6 +5,7 @@ from preprocess import preprocess_chapters, preprocess_full_text
 from lexdiv import lex_div
 from entities import entities
 from topics import build_topics_per_chapter, print_topics
+from similarity import similar_books
 
 # This parser reads the command line options
 parser = argparse.ArgumentParser(description="Book NLP tool")
@@ -53,9 +54,11 @@ if args.topics:
 
 # These parts are not finished yet
 if args.summarise:
-    print("not done yet")
+    from summary import summarise
+
+    print(summarise(text))
 if args.similar:
-    print("not done yet")
+    print(similar_books(args.book_id, target_text=" ".join(tokens)))
 
 # If the user gives no option, we print a message
 if not any([args.lexdiv, args.entities, args.topics, args.summarise, args.similar]):
