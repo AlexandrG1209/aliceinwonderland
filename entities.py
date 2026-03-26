@@ -11,7 +11,4 @@ def entities(doc):
             characters.add(ent.text)
 
     # We return a simple text result
-    return (
-        f"characters: {sorted(characters)}\n"
-        f"locations: {sorted(locations)}"
-    )
+    return sorted(characters), sorted (locations)

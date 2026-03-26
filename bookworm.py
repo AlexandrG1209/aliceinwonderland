@@ -6,6 +6,7 @@ from lexdiv import lex_div
 from entities import entities
 from topics import build_topics_per_chapter, print_topics
 from summary import summarise
+from card import card
 
 # This parser reads the command line options
 parser = argparse.ArgumentParser(description="Book NLP tool")
@@ -17,6 +18,7 @@ parser.add_argument("--entities", action="store_true")
 parser.add_argument("--topics", action="store_true")
 parser.add_argument("--summarise", action="store_true")
 parser.add_argument("--similar", action="store_true")
+parser.add_argument("--card", action="store_true")
 
 args = parser.parse_args()
 
@@ -58,37 +60,11 @@ if args.summarise:
 if args.similar:
     print("not done yet")
 
+# Show all information on a card using json to give it formatting
+import json
+if args.card:
+    print(json.dumps(card(args.book_id, text), indent=2))
+
 # If the user gives no option, we print a message
 if not any([args.lexdiv, args.entities, args.topics, args.summarise, args.similar]):
     print("invalid input, try again")
-
-
-'''
-print("--- Main Menu ---\n\n\n",
-       "options:\n", 
-       "1. quit\n"
-       "2. Lexical diversity\n",
-       "3. Named entities recognition\n"
-       "4. summary\n", 
-       "5. Comparaison\n")
-
-user_opt = 0
-
-while user_opt != 1:
-    book_id = int(input("Enter book ID >"))
-    user_opt = int(input("Enter an option >"))
-
-    if user_opt == 1:
-        break
-    
-    text = get_book(book_id)
-
-    if user_opt == 2:
-        tokens = preprocess(text)
-        result =lex_div(tokens)
-        print(result)
-    
-    elif user_opt == 3:
-        doc = nlp(text)
-        entities(doc)
-''' 
