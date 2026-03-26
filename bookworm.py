@@ -1,16 +1,15 @@
 import argparse
+import json
+
 from loader import get_book
 from html_parser import extract_chapters
 from preprocess import preprocess_chapters, preprocess_full_text
 from lexdiv import lex_div
 from entities import entities
-<<<<<<< Updated upstream
-from topics import build_topics_per_chapter, print_topics
-=======
 from topics import build_topics_per_chapter
 from summary import summarise
->>>>>>> Stashed changes
 from similarity import similar_books
+from card import card
 
 # This parser reads the command line options
 parser = argparse.ArgumentParser(description="Book NLP tool")
@@ -22,6 +21,7 @@ parser.add_argument("--entities", action="store_true")
 parser.add_argument("--topics", action="store_true")
 parser.add_argument("--summarise", action="store_true")
 parser.add_argument("--similar", action="store_true")
+parser.add_argument("--card", action="store_true")
 
 args = parser.parse_args()
 
@@ -59,43 +59,14 @@ if args.topics:
 
 # These parts are not finished yet
 if args.summarise:
-    from summary import summarise
-
     print(summarise(text))
 if args.similar:
     print(similar_books(args.book_id, target_text=" ".join(tokens)))
 
+# Show all information on a card using json to give it formatting
+if args.card:
+    print(json.dumps(card(args.book_id, text), indent=2))
+
 # If the user gives no option, we print a message
-if not any([args.lexdiv, args.entities, args.topics, args.summarise, args.similar]):
+if not any([args.lexdiv, args.entities, args.topics, args.summarise, args.similar, args.card]):
     print("invalid input, try again")
-
-
-'''
-print("--- Main Menu ---\n\n\n",
-       "options:\n", 
-       "1. quit\n"
-       "2. Lexical diversity\n",
-       "3. Named entities recognition\n"
-       "4. summary\n", 
-       "5. Comparaison\n")
-
-user_opt = 0
-
-while user_opt != 1:
-    book_id = int(input("Enter book ID >"))
-    user_opt = int(input("Enter an option >"))
-
-    if user_opt == 1:
-        break
-    
-    text = get_book(book_id)
-
-    if user_opt == 2:
-        tokens = preprocess(text)
-        result =lex_div(tokens)
-        print(result)
-    
-    elif user_opt == 3:
-        doc = nlp(text)
-        entities(doc)
-''' 
