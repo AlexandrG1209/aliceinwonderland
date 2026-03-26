@@ -1,41 +1,36 @@
-from preprocess import preprocess, clean_text  # text cleaning + tokenisation
-from lexdiv import lex_div  # lexical diversity function
-from entities import entities  # named entity recognition
-from summary import summarise  # your summariser
-# from similar import similar_books  # (add later when implemented)
+from entities import entities
+from html_parser import extract_book_info
+from lexdiv import lex_div
+from similarity import similar_books
+from summary import summarise
+from topics import build_topics_per_chapter
 
 import spacy
 
-nlp = spacy.load("en_core_web_sm")  # load spaCy model
+# The card also uses spaCy for named entities
+nlp = spacy.load("en_core_web_sm")
+nlp.max_length = 2_000_000
 
 
-def card(book_id, text):
-
-    cleaned_text = clean_text(text)
-
-    tokens = preprocess(cleaned_text)
-
+def card(book_id, html, text, tokens, chapters_tokens):
+    # Reuse the outputs of the existing modules to build one final object
     lexdiv = lex_div(tokens)
 
-    doc = nlp(cleaned_text)
+    doc = nlp(text)
 
     characters, locations = entities(doc)
 
-    summary = summarise(cleaned_text)
+    summary = " ".join(summarise(text).split())
+    topics = build_topics_per_chapter(chapters_tokens)
+    similar = similar_books(book_id, target_text=" ".join(tokens))
 
-    similar = ["Not implemented"]
-
-    # Creating card and implementing variables from above
+    # Gather all results in the structure expected by the project subject
     card = {
-        "info": {
-            "id": str(book_id),
-            "authors": "unknown",
-            "bookshelves": "unknown"
-        },
+        "info": extract_book_info(html, book_id),
 
         "lexdiv": lexdiv,
 
-        "topics": {},
+        "topics": topics,
 
         "entities": {
             "characters": characters,

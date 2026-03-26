@@ -106,10 +106,15 @@ def get_book_title(book_id):
     html = get_book(book_id)
     soup = BeautifulSoup(html, "html.parser")
 
-    # Read the title from the Gutenberg header line
-    strong_title = soup.find("strong", string="Title")
-    title_line = strong_title.parent.get_text(" ", strip=True)
-    title = title_line.replace("Title", "", 1).replace(":", "", 1).strip()
+    # Read the title from the metadata in the head
+    title_tag = soup.find("meta", attrs={"name": "dc.title"})
+    if title_tag:
+        title = title_tag.get("content", "").strip()
+    else:
+        # Fallback to the Gutenberg header line
+        strong_title = soup.find("strong", string="Title")
+        title_line = strong_title.parent.get_text(" ", strip=True)
+        title = title_line.replace("Title", "", 1).replace(":", "", 1).strip()
 
     # Save the title even if the text is not built yet
     cached_text = data["text"] if "text" in data else ""

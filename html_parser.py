@@ -1,6 +1,13 @@
 from bs4 import BeautifulSoup
 
 
+def _meta_content(soup, name):
+    tag = soup.find("meta", attrs={"name": name})
+    if tag:
+        return tag.get("content", "").strip()
+    return ""
+
+
 def is_english(soup):
     """
     Check if the book is in English using the header.
@@ -39,6 +46,39 @@ def remove_header_footer(soup):
     footer = soup.find("section", id="pg-footer")
     if footer:
         footer.decompose()
+
+
+def extract_book_info(html, book_id):
+    """
+    Extract basic metadata from the Gutenberg header
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    header = soup.find("section", id="pg-header")
+
+    # Start with fallback values in case some metadata is missing
+    info = {
+        "id": str(book_id),
+        "authors": "unknown",
+        "bookshelves": "unknown",
+    }
+
+    if not header:
+        return info
+
+    # Metadata in the head is usually cleaner than the visible header text
+    author = _meta_content(soup, "dc.creator")
+    if author:
+        info["authors"] = author
+
+    subjects = [
+        tag.get("content", "").strip()
+        for tag in soup.find_all("meta", attrs={"name": "dc.subject"})
+        if tag.get("content", "").strip()
+    ]
+    if subjects:
+        info["bookshelves"] = "; ".join(subjects)
+
+    return info
 
 
 def extract_chapters(html):
