@@ -4,7 +4,12 @@ from html_parser import extract_chapters
 from preprocess import preprocess_chapters, preprocess_full_text
 from lexdiv import lex_div
 from entities import entities
+<<<<<<< Updated upstream
 from topics import build_topics_per_chapter, print_topics
+=======
+from topics import build_topics_per_chapter
+from summary import summarise
+>>>>>>> Stashed changes
 from similarity import similar_books
 
 # This parser reads the command line options
@@ -50,7 +55,7 @@ if args.entities:
 # Show topics for each chapter
 if args.topics:
     topics = build_topics_per_chapter(chapters_tokens)
-    print_topics(topics)
+    print(topics)
 
 # These parts are not finished yet
 if args.summarise:

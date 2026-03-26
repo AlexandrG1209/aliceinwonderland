@@ -55,16 +55,3 @@ def build_topics_per_chapter(chapters_tokens, n_words=10):
         topics[i + 1] = words
 
     return topics
-
-
-def print_topics(topics):
-    """
-    Print topics in a readable format.
-    """
-    if not topics:
-        print("No topics found")
-        return
-
-    # Print one line per chapter
-    for chapter_id, words in topics.items():
-        print(f"Chapter {chapter_id}: {', '.join(words)}")
